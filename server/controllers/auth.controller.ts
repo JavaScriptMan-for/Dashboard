@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { LoginData, RegisterData, VerifyCodeType } from "@types-my/auth.types";
+import { LoginData, RegisterData, VerifyCodeType, UserType, NewUserData } from "@types-my/auth.types";
 
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { HydratedDocument } from "mongoose";
 
-import UserModel, { UserType } from "@models/User.model";
+import UserModel from "@models/User.model";
 import MailOptions from "@services/mailOptions.service";
 import transporter from "@services/transporter.service";
 
@@ -15,6 +15,8 @@ class AuthController {
 
     private newUser: HydratedDocument<UserType> | null = null;
     private token: string | null = null;
+
+    private count: number = 0;
 
     private createVerifyCode(): number {
         const code = Math.floor(Math.random() * 999999 + 111111)
@@ -127,9 +129,36 @@ class AuthController {
             res.status(500).json({message: "Ошибка сервера при авторизации"})
         }
     }
+    public async changeUserData (req: Request<{}, {}, NewUserData>, res: Response): Promise<any> {
+        try {
+            const { last_name, first_name, username } = req.body;
+              
+            const user = res.locals.user as UserType;
+
+            if(first_name !== "" || first_name !== user.first_name) {
+                const change_first_name = await UserModel.updateOne({ username: user.username }, { first_name })
+                if(!change_first_name) { this.count += 1; return res.status(400).json({message: "Не удалось изменить first_name"}) }
+            }
+            if(last_name !== "" || last_name !== user.last_name) {
+                const change_first_name = await UserModel.updateOne({ username: user.username }, { last_name })
+                if(!change_first_name) { this.count += 1; return res.status(400).json({message: "Не удалось изменить last_name"}) }
+            }
+            if(username !== "" || username !== user.username) {
+                const change_first_name = await UserModel.updateOne({ username: user.username }, { username })
+                if(!change_first_name) { this.count += 1; return res.status(400).json({message: "Не удалось изменить username"}) }
+            }
+
+            if(this.count === 0) return res.status(400).json({message: "Вы ничего не изменили"})
+            res.status(200).json({message: "Вы успешно изменили данные"})
+        } catch (error) {
+            res.status(500).json({message: "Ошибка сервера при изменении данных пользователя"});
+            console.error("Ошибка сервера при изменении данных пользователя", error)
+        }
+    }
 }
 
 const authContr = new AuthController();
 export const register = authContr.register.bind(authContr)
 export const verify = authContr.verify.bind(authContr)
 export const login = authContr.login.bind(authContr)
+export const changeUserData = authContr.changeUserData.bind(authContr)

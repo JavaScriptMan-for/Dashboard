@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
-import { RegisterData } from "@types-my/auth.types";
+import { UserType } from "@types-my/auth.types";
 
-export type UserType = Omit<RegisterData, 'confirm_password'>
 
 const User: Schema<UserType> = new Schema({
     first_name: {type: String, required: true},
