@@ -65,32 +65,35 @@ class AuthController {
             return res.status(500).json({ message: "Ошибка сервера" })
         }
     }
-    public async verify (req: Request<{}, {}, VerifyCodeType>, res: Response): Promise<any> {
+    public async verify(req: Request<{}, {}, VerifyCodeType>, res: Response): Promise<any> {
         const { code } = req.body;
 
-        if(code.toString().length !== 6) return res.status(400).json({message: "Некорректная длина кода"});
+        if (code.toString().length !== 6) return res.status(400).json({ message: "Некорректная длина кода" });
 
         const to_num_code = Number(code);
-        if(isNaN(to_num_code)) return res.status(400).json({message: "Некорректный код"})
-        
+        if (isNaN(to_num_code)) return res.status(400).json({ message: "Некорректный код" })
+
         const isVerified = to_num_code === this.saveVerifyCode;
-        if(!isVerified) return res.status(400).json({message: "Неверный код"});
+        if (!isVerified) return res.status(400).json({ message: "Неверный код" });
 
-        if(!this.newUser) return res.status(400).json({message: "Непредвиденная ошибка"})
+        if (!this.newUser) return res.status(400).json({ message: "Непредвиденная ошибка" })
         this.token = jwt.sign(
-    {
-        userId: this.newUser._id,
-        first_name: this.newUser.first_name,
-        last_name: this.newUser.last_name,
-        username: this.newUser.username,
-        email: this.newUser.email
-    },
-        this.JWT_KEY,
-        {expiresIn: '12h'}
-            )
-       
+            {
+                userId: this.newUser._id,
+                first_name: this.newUser.first_name,
+                last_name: this.newUser.last_name,
+                username: this.newUser.username,
+                email: this.newUser.email
+            },
+            this.JWT_KEY,
+            { expiresIn: '12h' }
+        )
 
-        res.status(200).json({message: "Код верный", data: {jwt: this.token}})
+
+        res.status(200).json({ message: "Код верный", data: { jwt: this.token } })
+    }
+    public async login () {
+        
     }
 }
 
