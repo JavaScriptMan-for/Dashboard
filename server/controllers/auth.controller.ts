@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { RegisterData } from "@types-my/auth.types";
+import { RegisterData, VerifyCodeType } from "@types-my/auth.types";
 
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
+import jwt from 'jsonwebtoken'
 import { HydratedDocument } from "mongoose";
 
 import UserModel, { UserType } from "@models/User.model";
@@ -11,16 +12,17 @@ import transporter from "@services/transporter.service";
 
 class AuthController {
     private readonly MY_EMAIL: string = process.env.MY_EMAIL || '';
-    private newUser?: HydratedDocument<UserType>;
+    private readonly JWT_KEY: string = process.env.JWT_KEY || '';
 
-    private createVerifyCode(): string {
-        const length = 6;
-        const randomBytes = crypto.randomBytes(Math.ceil(length / 2));
-        const code = parseInt(randomBytes.toString('hex'), 16).toString().slice(0, length);
-        return code;
+    private newUser: HydratedDocument<UserType> | null = null;
+    private token: string | null = null;
+
+    private createVerifyCode(): number {
+        const code = Math.floor(Math.random() * 999999 + 111111)
+        return Number(code);
     }
 
-    private readonly saveVerifyCode: string = this.createVerifyCode();
+    private saveVerifyCode: number | null = null;
 
     public async register(req: Request<{}, {}, RegisterData>, res: Response): Promise<any> {
         try {
@@ -37,6 +39,8 @@ class AuthController {
 
             const hashed_password = await bcrypt.hash(password, 8);
             this.newUser = new UserModel({ first_name, last_name, username, email, password: hashed_password });
+
+            this.saveVerifyCode = this.createVerifyCode()
 
             const main_options = new MailOptions(
                 `${this.MY_EMAIL} Dashboard`,
@@ -61,10 +65,35 @@ class AuthController {
             return res.status(500).json({ message: "Ошибка сервера" })
         }
     }
-    public async verify () {
+    public async verify (req: Request<{}, {}, VerifyCodeType>, res: Response): Promise<any> {
+        const { code } = req.body;
+
+        if(code.toString().length !== 6) return res.status(400).json({message: "Некорректная длина кода"});
+
+        const to_num_code = Number(code);
+        if(isNaN(to_num_code)) return res.status(400).json({message: "Некорректный код"})
         
+        const isVerified = to_num_code === this.saveVerifyCode;
+        if(!isVerified) return res.status(400).json({message: "Неверный код"});
+
+        if(!this.newUser) return res.status(400).json({message: "Непредвиденная ошибка"})
+        this.token = jwt.sign(
+    {
+        userId: this.newUser._id,
+        first_name: this.newUser.first_name,
+        last_name: this.newUser.last_name,
+        username: this.newUser.username,
+        email: this.newUser.email
+    },
+        this.JWT_KEY,
+        {expiresIn: '12h'}
+            )
+       
+
+        res.status(200).json({message: "Код верный", data: {jwt: this.token}})
     }
 }
 
 const authContr = new AuthController();
 export const register = authContr.register.bind(authContr)
+export const verify = authContr.verify.bind(authContr)
