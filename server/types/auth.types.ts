@@ -6,7 +6,8 @@ export interface RegisterData {
     password: string,
     confirm_password: string
 }
-export type VerifyCodeType = { code: string }
+export type VerifyCodeType = { code: string };
+
 export interface LoginData {
     username: string,
     password: string,

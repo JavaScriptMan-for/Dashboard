@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { RegisterData, VerifyCodeType } from "@types-my/auth.types";
+import { LoginData, RegisterData, VerifyCodeType } from "@types-my/auth.types";
 
 import bcrypt from 'bcrypt'
-import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import { HydratedDocument } from "mongoose";
 
@@ -19,7 +18,7 @@ class AuthController {
 
     private createVerifyCode(): number {
         const code = Math.floor(Math.random() * 999999 + 111111)
-        return Number(code);
+        return code;
     }
 
     private saveVerifyCode: number | null = null;
@@ -62,10 +61,12 @@ class AuthController {
                     res.status(400).json({ message: "Ошибка при отправке письма" })
                 })
         } catch (error) {
-            return res.status(500).json({ message: "Ошибка сервера" })
+            console.error("Ошибка сервера при регистрации", error)
+            res.status(500).json({ message: "Ошибка сервера при регистрации" })
         }
     }
     public async verify(req: Request<{}, {}, VerifyCodeType>, res: Response): Promise<any> {
+        try {
         const { code } = req.body;
 
         if (code.toString().length !== 6) return res.status(400).json({ message: "Некорректная длина кода" });
@@ -89,14 +90,46 @@ class AuthController {
             { expiresIn: '12h' }
         )
 
+        await this.newUser.save();
 
         res.status(200).json({ message: "Код верный", data: { jwt: this.token } })
+        } catch(error) {
+            console.error("Ошибка сервера при подтверждении аккаунта")
+            res.status(500).json({message: "Ошибка сервера при подтверждении аккаунта"})
+        }
     }
-    public async login () {
-        
+    public async login (req: Request<{}, {}, LoginData>, res: Response): Promise<any> {
+        try {
+        const { username, password, isRemember } = req.body;
+
+        const candidate = await UserModel.findOne({ username });
+        if(!candidate) return res.status(409).json({message: "Неверный логин или пароль"})
+
+        const isMatch = await bcrypt.compare(password, candidate.password);
+        if(!isMatch) return res.status(400).json({message: "Неверный логин или пароль"});
+
+        this.token = jwt.sign(
+            {
+                userId: candidate._id,
+                first_name: candidate.first_name,
+                last_name: candidate.last_name,
+                username: candidate.username,
+                email: candidate.email
+            },
+            this.JWT_KEY,
+            {expiresIn: '12h'}
+        );
+
+        res.status(200).json({message: "Вы успешно авторизованы", data: { jwt: this.token }})
+
+        } catch(error) {
+            console.error("Ошибка при авторизации", error);
+            res.status(500).json({message: "Ошибка сервера при авторизации"})
+        }
     }
 }
 
 const authContr = new AuthController();
 export const register = authContr.register.bind(authContr)
 export const verify = authContr.verify.bind(authContr)
+export const login = authContr.login.bind(authContr)
