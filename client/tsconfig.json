@@ -1,0 +1,24 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "lib": ["DOM"],
+    "baseUrl": ".",
+    "paths": {
+    "@components/*": ["./src/components/*"],
+    "@pages/*": ["./src/pages/*"],
+    "@types-my/*": ["./types/*"],
+    "@slices-my/*": ["./store/*"],
+    "@methods/*": ["./src/methods/*"],
+    "@enums/*": ["./enums/*"],
+    "@styles/*": ["./src/sass/*"],
+    "@layouts/*": ["./src/layouts/*"]
+  }
+  },
+
+
+
+}

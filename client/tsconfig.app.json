@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": false,
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@types-my/*": ["./types/*"],
+      "@slices-my/*": ["./store/*"],
+      "@methods/*": ["./src/methods/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@enums/*": ["./enums/*"],
+      "@styles/*": ["./src/sass"],
+      "@layouts/*": ["./src/layouts/*"]
+    },
+    "moduleResolution": "node", // Или "bundler" или "nodenext" - проверь
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "lib": ["es2017", "DOM", "DOM.Iterable"],
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src", "types", "store", "enums"],  // Включаем "src", "types", и "store"
+  "exclude": ["node_modules", "**/node_modules/*"]
+}
