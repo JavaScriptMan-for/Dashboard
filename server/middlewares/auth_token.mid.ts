@@ -4,6 +4,14 @@ import { UserType } from "@types-my/auth.types";
 
 const JWT_KEY = process.env.JWT_KEY || "";
 
+export interface JwtUserType {
+  userId: string,
+  first_name: string,
+  last_name: string,
+  username: string,
+  email: string
+}
+
 export const auth_token: RequestHandler = (
   req: Request,
   res: Response,
@@ -23,7 +31,7 @@ export const auth_token: RequestHandler = (
 
     if (typeof decoded === "object" && decoded !== null) {
       // в res.locals можно хранить что угодно без ошибок типов
-      res.locals.user = decoded as UserType;
+      res.locals.user = decoded as JwtUserType;
       return next();
     }
 
