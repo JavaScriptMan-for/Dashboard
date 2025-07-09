@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction, RequestHandler } from "express";
-import { UserType } from "@types-my/auth.types";
 
 const JWT_KEY = process.env.JWT_KEY || "";
 
@@ -30,7 +29,6 @@ export const auth_token: RequestHandler = (
     }
 
     if (typeof decoded === "object" && decoded !== null) {
-      // в res.locals можно хранить что угодно без ошибок типов
       res.locals.user = decoded as JwtUserType;
       return next();
     }
