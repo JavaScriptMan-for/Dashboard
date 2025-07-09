@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { LoginData, RegisterData, VerifyCodeType, UserType, NewUserData } from "@types-my/auth.types";
+import { LoginData, RegisterData, VerifyCodeType, UserType, NewUserData, NewEmail } from "@types-my/auth.types";
 
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
@@ -155,6 +155,63 @@ class AuthController {
             console.error("Ошибка сервера при изменении данных пользователя", error)
         }
     }
+
+    private new_email: string | null = null;
+    private save_confirm_email_code: number | null = null;
+
+    public async changeEmail (req: Request<{}, {}, NewEmail>, res: Response): Promise<any> {
+        try {
+            const { email } = req.body;
+            const user = res.locals.user as UserType;
+
+            if(email === "" || email === user.email) return res.status(400).json({message: "Вы не изменили email"});
+
+            this.new_email = email;
+            this.save_confirm_email_code = this.createVerifyCode();
+
+            const mail_options = new MailOptions(
+                `${this.MY_EMAIL} Dashboard`,
+                email,
+                "Изменение email",
+                `
+                <h1>Изменение email</h1>
+                <code>${this.save_confirm_email_code}</code>
+                `
+            )
+            await transporter.sendMail(mail_options)
+                .catch((err: Error) => console.error(`Ошибка при отправке кода на почту ${email}`, err))
+
+            res.status(200).json({message: `Код на ваш email: ${email} отправлен`})
+
+        } catch (error) {
+          console.error("Ошибка при изменении email", error);
+          res.status(500).json({message: "Ошибка при изменении email"})  
+        }
+    }
+
+    public async verifyNewEmail (req: Request<{}, {}, VerifyCodeType>, res: Response): Promise<any> {
+        try {
+            const { code } = req.body;
+            const user = res.locals.user as UserType;
+
+            if(!this.new_email) return res.status(400).json({message: "Сервер не получил новый email"})
+            if(!this.save_confirm_email_code) return res.status(400).json({message: "Сервер не получил код"})
+
+            if(code.toString().length !== 6) return res.status(400).json({message: "Некорректная длина кода"})
+
+            const confirm_email = Number(code) === this.save_confirm_email_code;
+            if(!confirm_email) return res.status(400).json({message: "Неверный код"});
+
+            const change_email = await UserModel.updateOne({ username: user.username }, { email: this.new_email })
+            if(!change_email) return res.status(400).json({message: "Ошибка при изменении email"});
+
+            res.status(200).json({message: "Email успешно изменен"})
+            
+        } catch (error) {
+            console.error("Ошибка сервера при изменении email", error);
+            res.status(500).json({message: "Ошибка сервера при изменении email"})
+        }
+    }
 }
 
 const authContr = new AuthController();
@@ -162,3 +219,5 @@ export const register = authContr.register.bind(authContr)
 export const verify = authContr.verify.bind(authContr)
 export const login = authContr.login.bind(authContr)
 export const changeUserData = authContr.changeUserData.bind(authContr)
+export const changeEmail = authContr.changeEmail.bind(authContr)
+export const verifyEmail = authContr.verifyNewEmail.bind(authContr)
