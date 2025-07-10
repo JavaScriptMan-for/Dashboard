@@ -15,7 +15,7 @@
       "@methods/*": ["./src/methods/*"],
       "@pages/*": ["./src/pages/*"],
       "@enums/*": ["./enums/*"],
-      "@styles/*": ["./src/sass"],
+      "@styles/*": ["./src/sass/*"],
       "@layouts/*": ["./src/layouts/*"]
     },
     "moduleResolution": "node", // Или "bundler" или "nodenext" - проверь

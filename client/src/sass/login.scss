@@ -1,0 +1,138 @@
+@font-face {
+    font-family: Montserrat-Bold;
+    src: url("/fonts/Montserrat-Bold.ttf");
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url("/fonts/Montserrat-Medium.ttf");
+}
+
+@mixin ColumnFlex {
+    display: flex;
+    flex-direction: column;
+}
+@mixin RowFlex {
+    display: flex;
+    flex-direction: row;
+}
+
+@mixin ColumnFlexCenter ($y: 'start') {
+    @include ColumnFlex();
+    align-items: center;
+    justify-content: $y;
+}
+@mixin RowFlexCenter ($y: start) {
+    @include RowFlex();
+    align-items: $y;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 36px;
+    margin-bottom: 0;
+    font-weight: bold;
+    font-family: "Montserrat-Bold", sans-serif;
+    color: #212427;
+    align-self: flex-start
+}
+
+body {
+    @include RowFlexCenter(center);
+    overflow: hidden;
+    margin-top: 0;
+    width: 100%;
+    height: 90vh;
+    background-color: #f87171; 
+    background-image: url('/img/back.png');
+    background-blend-mode: multiply; 
+    background-size: 99vw ;
+    background-repeat: no-repeat;
+
+}
+
+#login {
+    display: flex;
+    justify-content: space-between;
+    background-color: #fff;
+    width: 70vw;
+
+    margin-top: 128px;
+}
+#img_login {
+    user-select: none;
+    align-self: flex-end
+}
+#sign_in {
+    @include ColumnFlex();
+    
+    gap: 25px;
+    margin-left: 50px;
+    margin-top: 145px;
+    padding-bottom: 157.5px
+}
+.checkbox-div {
+    @include RowFlex();
+    gap: 26px;
+    align-self: flex-start;
+    cursor: pointer;
+}
+.input-div {
+    @include RowFlex();
+    align-items: center;
+
+    input {
+        outline: none;
+        width: 559px;
+        height: 60px;
+        border: 1px solid #565454;
+        border-radius: 5px;
+
+        padding-left: 65px;
+
+        &::placeholder {
+            font-size: 16px;
+            font-family: "Montserrat", sans-serif;
+            color: #999999;
+            font-weight: normal;
+        }
+    }
+}
+    #is-remember-checkbox {
+        border: 1px solid #565454;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+#else {
+    margin-top: 67px;
+    gap: 15px;
+
+    .various {
+        @include RowFlex();
+        align-items: center;
+
+        span {
+            margin-right: 20px;
+            font-family: "Montserrat", sans-serif;
+            font-size: 16px;
+            color: #212427;
+
+            a {
+                font-size: 16px;
+                color: #008BD9;
+                text-decoration: none;
+                font-family: "Montserrat", sans-serif;
+                font-weight: 500;
+            }
+        }
+        .links {
+            display: flex;
+            gap: 10px;
+        }
+        .input-icon {
+            margin: 0;
+        }
+    }
+}
+
