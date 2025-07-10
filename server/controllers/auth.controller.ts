@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { HydratedDocument } from "mongoose";
 import { JwtUserType } from "@middlewares/auth_token.mid";
+import { validationResult } from "express-validator"
 
 import UserModel from "@models/User.model";
 import MailOptions from "@services/mailOptions.service";
@@ -29,6 +30,12 @@ class AuthController {
     public async register(req: Request<{}, {}, RegisterData>, res: Response): Promise<any> {
         try {
             const { first_name, last_name, username, email, password, confirm_password } = req.body;
+
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
 
             const isHasUsername = await UserModel.findOne({ username });
             if (isHasUsername) return res.status(409).json({ message: "Пользователь с таким username уже существует" });
@@ -72,6 +79,12 @@ class AuthController {
         try {
             const { code } = req.body;
 
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
+
             if (code.toString().length !== 6) return res.status(400).json({ message: "Некорректная длина кода" });
 
             const to_num_code = Number(code);
@@ -105,6 +118,12 @@ class AuthController {
         try {
             const { username, password, isRemember } = req.body;
 
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
+
             const candidate = await UserModel.findOne({ username });
             if (!candidate) return res.status(409).json({ message: "Неверный логин или пароль" })
 
@@ -133,6 +152,12 @@ class AuthController {
     public async changeUserData(req: Request<{}, {}, NewUserData>, res: Response): Promise<any> {
         try {
             const { last_name, first_name, username } = req.body;
+
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
 
             const user = res.locals.user as JwtUserType;
 
@@ -164,6 +189,12 @@ class AuthController {
         try {
             const { email } = req.body;
             const user = res.locals.user as JwtUserType;
+
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
 
             if (email === "" || email === user.email) return res.status(400).json({ message: "Вы не изменили email" });
 
@@ -199,6 +230,12 @@ class AuthController {
             const { code } = req.body;
             const user = res.locals.user as JwtUserType;
 
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
+
             if (!this.new_email) return res.status(400).json({ message: "Сервер не получил новый email" })
             if (!this.save_confirm_email_code) return res.status(400).json({ message: "Сервер не получил код" })
 
@@ -225,6 +262,12 @@ class AuthController {
         try {
             const { new_password, new_confirm_password } = req.body;
             const auth = res.locals.user as JwtUserType;
+
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
 
             const confirm_passwords = new_password === new_confirm_password;
             if (!confirm_passwords) return res.status(400).json({ message: "Пароли не совпадают" });
@@ -265,6 +308,12 @@ class AuthController {
         try {
             const { code } = req.body;
             const user = res.locals.user as JwtUserType;
+
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
 
             if (code.toString().length !== 6) return res.status(400).json({ message: "Неверная длина кода" })
 
