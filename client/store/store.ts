@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux'
 
-import firstSlice from "@slices-my/slice.slice"
+import formSlice from "@slices-my/form"
 
 const store = configureStore({
   reducer: {
-    first_slice: firstSlice
+    form_slice: formSlice
   },
 })
 

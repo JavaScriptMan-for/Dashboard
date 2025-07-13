@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { Routes, Route } from "react-router-dom"
-import "@styles/main.scss"
+
 
 //Layouts
 import MainLayout from "@layouts/MainLayout"
@@ -8,6 +8,7 @@ import MainLayout from "@layouts/MainLayout"
 //Pages
 import IndexRedirect from "@pages/IndexRedirect"
 import LoginPage from "@pages/LoginPage"
+import RegisterPage from "@pages/RegisterPage"
 
 const App: FC = () => {
 
@@ -15,8 +16,9 @@ const App: FC = () => {
     <>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-            <Route path="/" element={<IndexRedirect />} />
-            <Route index path="login" element={<LoginPage />} />
+            <Route index path="/" element={<IndexRedirect />} />
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
         </Route>
       </Routes>
     </>
