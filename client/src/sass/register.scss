@@ -1,0 +1,67 @@
+@font-face {
+    font-family: Montserrat-Bold;
+    src: url("/fonts/Montserrat-Bold.ttf");
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url("/fonts/Montserrat-Medium.ttf");
+}
+
+@mixin ColumnFlex {
+    display: flex;
+    flex-direction: column;
+}
+@mixin RowFlex {
+    display: flex;
+    flex-direction: row;
+}
+
+@mixin ColumnFlexCenter ($y: 'start') {
+    @include ColumnFlex();
+    align-items: center;
+    justify-content: $y;
+}
+@mixin RowFlexCenter ($y: start) {
+    @include RowFlex();
+    align-items: $y;
+    justify-content: center;
+}
+
+.form {
+    display: flex;
+    padding-right: 47px;
+    padding-bottom: 27px;
+    justify-content: space-between;
+
+    #sign_up {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        * {
+            justify-self: flex-start;
+        }
+    }
+
+}
+
+h1 {
+    margin-top: 38px;
+}
+
+
+        span {
+            margin-right: 20px;
+            font-family: "Montserrat", sans-serif;
+            font-size: 16px;
+            color: #212427;
+
+            a {
+                font-size: 16px;
+                color: #008BD9;
+                text-decoration: none;
+                font-family: "Montserrat", sans-serif;
+                font-weight: 500;
+            }
+        }
+

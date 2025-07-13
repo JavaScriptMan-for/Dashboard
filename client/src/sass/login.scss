@@ -28,6 +28,11 @@
     justify-content: center;
 }
 
+html, body {
+    margin: 0;
+    height: 90vh;
+}
+
 h1 {
     font-size: 36px;
     margin-bottom: 0;
@@ -42,24 +47,21 @@ body {
     overflow: hidden;
     margin-top: 0;
     width: 100%;
-    height: 90vh;
+    height: 100vh;
     background-color: #f87171; 
     background-image: url('/img/back.png');
     background-blend-mode: multiply; 
-    background-size: 99vw ;
+    background-size: 99vw;
     background-repeat: no-repeat;
-
 }
 
-#login {
+.form {
     display: flex;
     justify-content: space-between;
     background-color: #fff;
     width: 70vw;
-
-    margin-top: 128px;
 }
-#img_login {
+.img_form{
     user-select: none;
     align-self: flex-end
 }
@@ -98,7 +100,7 @@ body {
         }
     }
 }
-    #is-remember-checkbox {
+    .checkbox {
         border: 1px solid #565454;
         width: 18px;
         height: 18px;

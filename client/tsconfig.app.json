@@ -16,7 +16,8 @@
       "@pages/*": ["./src/pages/*"],
       "@enums/*": ["./enums/*"],
       "@styles/*": ["./src/sass/*"],
-      "@layouts/*": ["./src/layouts/*"]
+      "@layouts/*": ["./src/layouts/*"],
+      "@form-parts/*": ["./src/form_parts/*"]
     },
     "moduleResolution": "node", // Или "bundler" или "nodenext" - проверь
     "allowJs": true,

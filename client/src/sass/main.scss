@@ -17,6 +17,7 @@ label.icon_label {
     font-weight: bold;
     margin: 0;
     align-self: flex-start;
+    margin-left: 5px;
 }
 .checkbox-label {
     display: flex;
@@ -42,6 +43,7 @@ button {
 
     &:disabled {
         background-color: #FF9090;
+        cursor: no-drop;
     }
     &:hover {
         transform: translateY(-3px);

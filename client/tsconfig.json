@@ -15,10 +15,8 @@
     "@methods/*": ["./src/methods/*"],
     "@enums/*": ["./enums/*"],
     "@styles/*": ["./src/sass/*"],
-    "@layouts/*": ["./src/layouts/*"]
+    "@layouts/*": ["./src/layouts/*"],
+    "@form-parts/*": ["./src/form_parts/*"]
   }
   },
-
-
-
 }
