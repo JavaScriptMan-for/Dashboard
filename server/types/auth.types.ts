@@ -18,6 +18,14 @@ export interface LoginData {
     isRemember: boolean
 }
 
+export type Actions = 'register' | 'email' | 'password'
+
+export interface ResetData {
+    email: string,
+    header: string,
+    title: string,
+    action: Actions
+}
 export interface NewUserData extends Omit<UserType, 'email' | 'password'> {};
 
 export type NewEmail = { email: string };

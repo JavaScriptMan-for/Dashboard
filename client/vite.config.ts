@@ -16,7 +16,7 @@ export default defineConfig({
       '@enums': path.resolve(__dirname, './enums'),
       '@styles': path.resolve(__dirname, './src/sass'),
       "@layouts": path.resolve(__dirname, './src/layouts'),
-      "@form-parts": path.resolve(__dirname, './src/form_parts')
+      "@form-parts": path.resolve(__dirname, './src/form_parts'),
     },
   },
   server: {

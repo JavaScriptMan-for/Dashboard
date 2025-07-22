@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, verify, login, changeUserData, changeEmail, verifyEmail, changePassword, verifyChangePassword } from "@controllers/auth.controller";
+import { register, verify, login, resetCode, changeUserData, changeEmail, verifyEmail, changePassword, verifyChangePassword } from "@controllers/auth.controller";
 import { auth_token } from "@middlewares/auth_token.mid";
 import { check } from "express-validator";
 
@@ -22,6 +22,11 @@ router.post('/verify', [
 router.post('/login', [
     check('username', "Некорректный username").isLength({min: 3, max: 30}),
 ], login);
+router.post('/reset-code', [
+    check('title').isString(),
+    check('email').isEmail(),
+    check('header').isString()
+], resetCode)
 
 router.put('/change-user-data', auth_token, [
     check('first_name', "Некорректное имя").isLength({max: 35, min: 1}),

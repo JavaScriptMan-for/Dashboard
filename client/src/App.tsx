@@ -9,6 +9,7 @@ import MainLayout from "@layouts/MainLayout"
 import IndexRedirect from "@pages/IndexRedirect"
 import LoginPage from "@pages/LoginPage"
 import RegisterPage from "@pages/RegisterPage"
+import VerifyRegisterPage from "@pages/VerifyRegisterPage"
 
 const App: FC = () => {
 
@@ -19,6 +20,7 @@ const App: FC = () => {
             <Route index path="/" element={<IndexRedirect />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
+            <Route path="verify" element={<VerifyRegisterPage />} />
         </Route>
       </Routes>
     </>

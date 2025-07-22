@@ -1,3 +1,9 @@
+
+@font-face {
+    font-family: Montserrat;
+    src: url("/fonts/Montserrat-Medium.ttf");
+}
+
 .input-icon {
     width: 30px;
     height: 30px;
@@ -49,4 +55,25 @@ button {
         transform: translateY(-3px);
         background-color: #FF9090;
     }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Скрываем стрелочки для Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.back {
+    font-size: 16px;
+    color: #008BD9;
+    text-decoration: none;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    margin-left: -25px;
 }

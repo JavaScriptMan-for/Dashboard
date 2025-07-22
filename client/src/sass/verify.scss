@@ -1,0 +1,16 @@
+#verify {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 1600px;
+    height: 70vh;
+    background-color: white;
+    padding: 30px;
+    gap: 30px;
+
+    h1 {
+        align-self: auto;
+        margin-top: -40px;
+    }
+}

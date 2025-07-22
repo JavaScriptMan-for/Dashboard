@@ -1,0 +1,21 @@
+#verify-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 15px;
+
+    input {
+        width: 130px;
+        height: 160px;
+        border-radius: 20px;
+        font-size: 50px;
+        text-align: center;
+    }
+}
+#container-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}

@@ -1,4 +1,5 @@
 import express, { Express } from "express"
+import cookieParser from "cookie-parser";
 import mongoose from "mongoose"
 import dotenv from "dotenv"; dotenv.config();
 import users_route from "@routes/users.route"
@@ -11,6 +12,7 @@ const BASE_URL = process.env.BASE_URL || '';
 
 //Middlewares
 app.use(express.json());
+app.use(cookieParser())
 
 //Routes
 app.use('/api', users_route)

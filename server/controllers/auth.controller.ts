@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
-import { LoginData, RegisterData, VerifyCodeType, UserType, NewUserData, NewEmail, NewPassword } from "@types-my/auth.types";
-
+import {
+    LoginData, RegisterData, VerifyCodeType,
+    UserType, NewUserData, NewEmail, NewPassword,
+    ResetData, Actions
+ } from "@types-my/auth.types";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { HydratedDocument } from "mongoose";
@@ -10,6 +13,8 @@ import { validationResult } from "express-validator"
 import UserModel from "@models/User.model";
 import MailOptions from "@services/mailOptions.service";
 import transporter from "@services/transporter.service";
+
+
 
 class AuthController {
     private readonly MY_EMAIL: string = process.env.MY_EMAIL || '';
@@ -26,6 +31,32 @@ class AuthController {
     }
 
     private saveVerifyCode: number | null = null;
+
+    private async sendMail (email: string, title: string, header: string, action: Actions): Promise<void> {
+        let code: number | null = null;
+        switch(action) {
+            case 'register': code = this.createVerifyCode(); break;
+            case 'password': code = this.createVerifyCode(); break;
+            case 'email': code = this.createVerifyCode(); break
+        }
+        switch(action) {
+            case 'register': this.saveVerifyCode = code; break;
+            case 'password': this.save_verify_password_code = code; break;
+            case 'email': this.save_confirm_email_code = code; break
+        }
+
+            const main_options = new MailOptions(
+                `${this.MY_EMAIL} Dashboard`,
+                email,
+                title,
+                `
+                 <h1>${header}</h1>
+                 <code>${code}</code>
+                `
+            );
+
+            await transporter.sendMail(main_options)
+    }
 
     public async register(req: Request<{}, {}, RegisterData>, res: Response): Promise<any> {
         try {
@@ -49,19 +80,7 @@ class AuthController {
             const hashed_password = await bcrypt.hash(password, 8);
             this.newUser = new UserModel({ first_name, last_name, username, email, password: hashed_password });
 
-            this.saveVerifyCode = this.createVerifyCode()
-
-            const main_options = new MailOptions(
-                `${this.MY_EMAIL} Dashboard`,
-                email,
-                "Подтверждение аккаунта",
-                `
-                 <h1>Код для подтверждения аккаунта:</h1>
-                 <code>${this.saveVerifyCode}</code>
-                `
-            );
-
-            await transporter.sendMail(main_options)
+            await this.sendMail(email, 'Подтверждение аккаунта', 'Код для подтверждения аккаунта', 'register')
                 .then(() => {
                     console.log(`Код успешно отправлен на ${email}`);
                     res.status(200).json({ message: `Данные приняты. Вы получили письмо на почту ${email}` })
@@ -70,11 +89,33 @@ class AuthController {
                     console.error(`Ошибка при отправке кода на почту ${email}`, err);
                     res.status(400).json({ message: "Ошибка при отправке письма" })
                 })
+
+              
         } catch (error) {
             console.error("Ошибка сервера при регистрации", error)
             res.status(500).json({ message: "Ошибка сервера при регистрации" })
         }
     }
+
+    public async resetCode (req: Request<{}, {}, ResetData>, res: Response): Promise<any> {
+        try {
+        const { email, title, header, action } = req.body;
+
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                const errorMessages = errors.array().map(error => error.msg); 
+                return res.status(400).json({ message: "Некорректные данные", errors: errorMessages }); 
+            }
+
+
+        await this.sendMail(email, title, header, action);
+        res.status(200).json({message: "Код заново отправлен"})           
+        } catch (error) {
+            console.error("Ошибка сервера при изменении кода", error)
+            res.status(500).json({ message: "Ошибка сервера при изменении кода" })           
+        }
+    }
+
     public async verify(req: Request<{}, {}, VerifyCodeType>, res: Response): Promise<any> {
         try {
             const { code } = req.body;
@@ -339,6 +380,7 @@ const authContr = new AuthController();
 export const register = authContr.register.bind(authContr)
 export const verify = authContr.verify.bind(authContr)
 export const login = authContr.login.bind(authContr)
+export const resetCode = authContr.resetCode.bind(authContr)
 export const changeUserData = authContr.changeUserData.bind(authContr)
 export const changeEmail = authContr.changeEmail.bind(authContr)
 export const verifyEmail = authContr.verifyNewEmail.bind(authContr)
