@@ -89,7 +89,7 @@ const VerifyForm: FC<Props> = ({ method, onSuccess }) => {
       <input placeholder='X' type="number" id="figure_5" className="figures" ref={inputRefs[4]} onChange={handleChange(4)} />
       <input placeholder='X' type="number" id="figure_6" className="figures" ref={inputRefs[5]} onChange={handleChange(5)} />
     </form>
-      <Timer email={email} header={header} title={title} action={action}/>
+      <Timer email='' title='' header='' action='register'/>
     </div>
   )
 }
